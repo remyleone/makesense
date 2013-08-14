@@ -1,0 +1,6 @@
+Fabric==1.6.1
+matplotlib==1.2.1
+networkx==1.7
+requests==1.2.2
+Jinja2==2.7
+numpy==1.7.1
