@@ -1,0 +1,32 @@
+language: python
+
+install:
+    # Managing python dependencies through pip is the way to go. But it can be very long
+    # to compile every time all the dependencies therefore to speedup unit testing we will
+    # use binary packages
+  - "sudo apt-get -qq install python-matplotlib fabric python-pandas python-networkx python-numpy python-jinja2 python-scipy"
+    #- "pip install -r requirements.txt --use-mirrors"
+
+  - "git clone --recursive git://github.com/contiki-os/contiki"
+  - WGET="travis_retry wget --continue --tries=20 --waitretry=10 --retry-connrefused --no-dns-cache --timeout 300"
+  - sudo apt-get -qq update
+  - sudo apt-get -qq install lib32z1
+  - $WGET http://adamdunkels.github.io/contiki-fork/mspgcc-4.7.0-compiled.tar.bz2 &&
+    tar xjf mspgcc*.tar.bz2 -C /tmp/ &&
+    sudo cp -f -r /tmp/msp430/* /usr/local/ &&
+    rm -rf /tmp/msp430 mspgcc*.tar.bz2 &&
+    msp430-gcc --version
+
+    # Useful to analyze PCAP traces
+  - "sudo apt-get install tshark"
+
+script:
+    - "fab new:dummy"
+    - "fab make:dummy"
+    - "fab launch:dummy; echo 'TODO: Fix up output Java simulation';"
+    - "fab parse:dummy"
+    - "fab analyze:dummy"
+    # - "fab plot:dummy"
+
+notifications:
+  email: false

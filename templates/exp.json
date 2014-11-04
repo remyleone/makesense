@@ -1,0 +1,40 @@
+{
+  "analyze": {
+    "included_settings": [
+      "title"
+    ]
+  },
+  "clean": {},
+  "deploy": {},
+  "make": {
+    "included_settings": [
+      "title",
+      "random_seed",
+      "transmitting_range",
+      "interference_range",
+      "success_ratio_tx",
+      "success_ratio_rx",
+      "motes"
+    ]
+  },
+  "plot": {
+    "included_settings": [
+      "title"
+    ]
+  },
+  "report": {
+    "included_settings": [
+      "title"
+    ]
+  },
+  "settings": {
+    "motes": "{{ motes }}",
+    "mote_type": "{{ mote_types }}",
+    "interference_range": "{{ interference_range }}",
+    "random_seed": "{{ random_seed }}",
+    "success_ratio_rx": "{{ success_ratio_rx }}",
+    "success_ratio_tx": "{{ success_ratio_tx }}",
+    "title": "{{ name }}",
+    "transmitting_range": "{{ transmitting_range }}"
+  }
+}

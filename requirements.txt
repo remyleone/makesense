@@ -1,0 +1,8 @@
+pandas==0.15.0
+scipy==0.14
+Fabric==1.10.0
+matplotlib==1.4.2
+networkx==1.9.1
+requests==2.4.3
+Jinja2==2.7.3
+numpy==1.9.1

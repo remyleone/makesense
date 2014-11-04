@@ -1,0 +1,20 @@
+<html>
+<head>
+    <title>Report for the {{ title }}</title>
+</head>
+<body>
+    Tasks done:
+    <ul>
+        {% for task in tasks %}
+        <li>{{ task }}</li>
+        {% endfor %}
+    </ul>
+{% for report in reports %}
+    <figure>
+        <img src="{{ report.image_src }}" alt="{{ report.img_comment }}">
+        <figcaption>{{ report.comment }}</figcaption>
+    </figure>
+{{ report.text }}
+{% endfor %}
+</body>
+</html>
