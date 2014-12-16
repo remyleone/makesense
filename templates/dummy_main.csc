@@ -20,7 +20,6 @@
     <motetype>
       org.contikios.cooja.mspmote.WismoteMoteType
       <identifier>{{ mote_type.name }}</identifier>
-      <description>{{ mote_type.description }}</description>
       <firmware EXPORT="copy">{{ mote_type.firmware }}</firmware>
       <moteinterface>org.contikios.cooja.interfaces.Position</moteinterface>
       <moteinterface>org.contikios.cooja.interfaces.RimeAddress</moteinterface>
@@ -43,7 +42,7 @@
         org.contikios.cooja.interfaces.Position
         <x>{{ mote.x }}</x>
         <y>{{ mote.y }}</y>
-        <z>0.0</z>
+        <z>{{ mote.z }}</z>
       </interface_config>
       <interface_config>
         org.contikios.cooja.mspmote.interfaces.MspMoteID

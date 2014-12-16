@@ -6,6 +6,7 @@ from os.path import join as pj
 from fabric.api import task
 from jinja2 import Environment, FileSystemLoader
 
+# Default values
 ROOT_DIR = os.path.dirname(__file__)
 EXPERIMENT_FOLDER = pj(ROOT_DIR, "experiments")
 TEMPLATE_FOLDER = pj(ROOT_DIR, "templates")
@@ -19,10 +20,13 @@ def my_special_function(name):
         os.makedirs(path)
 
     c_template = TEMPLATE_ENV.get_template("dummy_template.c")
+    # We make the id start at 1 and finish at 42
     for value in range(1, 43):
         with open(pj(path, "dummy_%d.c" % value), "w") as f:
             f.write(c_template.render(my_value=value))
 
+    # If you change the platform target and want to push to iotlab
+    # don't forget to update the nodes names
     makefile_template = TEMPLATE_ENV.get_template("dummy_makefile")
     with open(pj(path, "Makefile"), "w") as f:
         f.write(makefile_template.render(contiki=CONTIKI_FOLDER,

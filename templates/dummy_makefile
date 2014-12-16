@@ -1,18 +1,13 @@
-all: dummy-client dummy-server
-TARGET = wismote
+SRC=$(wildcard [!symbols]*.c)
+PROGS = $(patsubst %.c,%,$(SRC))
+all: $(PROGS)
 
-UIP_CONF_IPV6=1
+CONTIKI={{ contiki }}
+TARGET={{ target }}
 
-LDFLAGS+=-lm
-FLAGS+=-lm
-TARGET_LIBFILES+=-lm
-
-CONTIKI = {{ contiki }}
 include $(CONTIKI)/Makefile.include
 
-ihex:
-	msp430-objcopy -O ihex dummy-client.wismote dummy-client.ihex
-	msp430-objcopy -O ihex dummy-server.wismote dummy-server.ihex
+UIP_CONF_IPV6=1
 
 run:
 	java -mx512m -jar $(CONTIKI)/tools/cooja/dist/cooja.jar -nogui=main.csc -contiki=$(CONTIKI)
@@ -20,5 +15,7 @@ run:
 cooja:
 	make TARGET=cooja main.csc
 
+cooja_iotlab:
+	make TARGET=cooja iotlab.csc
 
 # vi:filetype=make:ts=4:sw=4:et

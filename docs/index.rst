@@ -31,6 +31,7 @@ instructions for getting the most out of it.
 
    installation
    quickstart
+   folder
    iotlab
    remote
    campaign

@@ -20,6 +20,7 @@ First we will create a simple C code that print a message through a loop.
 
 .. literalinclude:: example_firmware.c
    :language: c 
+   :emphasize-lines: 6,22
 
 .. code-block:: c
 
@@ -31,7 +32,8 @@ information check out the Jinja2 documentation.
 This makefile will compile all the nodes.
 
 .. literalinclude:: example_makefile
-	:language: Makefile
+   :language: Makefile
+   :emphasize-lines: 5,6
 
 Step 2: Let's loop
 ------------------
@@ -41,6 +43,7 @@ it in the fabfile:
 
 .. literalinclude:: example_fabfile.py
    :language: python
+   :emphasize-lines: 23-25
 
 Then we would call this function like any other fabric function
 
@@ -48,6 +51,27 @@ Then we would call this function like any other fabric function
 
     fab my_special_function:dummy
 
+You should have files like:
+
+- dummy_1.iotlab-m3
+- ...
+- dummy_42.iotlab-m3
+
+created in experiments/dummy
+
+You should also have an iotlab.json looking like:
+
+.. code-block:: json
+
+   [
+       {
+           "firmware_path": "/home/sieben/Dropbox/workspace/makesense/experiments/prout/dummy_1.iotlab-m3",
+           "nodes": [
+               "m3-1.grenoble.iot-lab.info"
+           ]
+       },
+       ...
+   ]
 
 Step 3: Push to iotlab
 ----------------------
