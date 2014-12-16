@@ -33,6 +33,7 @@ instructions for getting the most out of it.
    quickstart
    iotlab
    remote
+   campaign
 
 
 .. toctree::

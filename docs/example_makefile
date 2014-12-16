@@ -1,0 +1,10 @@
+SRC=$(wildcard [!symbols]*.c)
+PROGS = $(patsubst %.c,%,$(SRC))
+all: $(PROGS)
+
+CONTIKI={{ contiki }}
+TARGET={{ target }}
+
+include $(CONTIKI)/Makefile.include
+
+# vi:filetype=make:ts=4:sw=4:et

@@ -9,14 +9,15 @@ installed all the required python libraries.
 Configure the Contiki stack
 ---------------------------
 
-To compile and execute WSN simulation we use the Contiki_ operating system.
-We need to set up the fabric file that will be the orchestrator of our experiments
-to know where is the contiki folder. For that simply put the address of your current
-contiki:
+To compile and execute WSN simulation we use the Contiki_ operating system. We
+need to set up the fabric file that will be the orchestrator of our
+experiments to know where is the contiki folder. For that simply put the
+address of your current contiki in the *fabfile.py* at the root of makesense:
 
 .. code-block:: python
 
-    CONTIKI_FOLDER = "/home/sieben/code/contiki"
+    # Modify in your fabfile this line
+    CONTIKI_FOLDER = "/my/path/to/contiki"
 
 If you are satisfied with default you don't need to modify anything in the
 fabfile to get started.
