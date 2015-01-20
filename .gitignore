@@ -50,3 +50,4 @@ nosetests.xml
 
 experiments
 contiki
+.ipynb_checkpoints
