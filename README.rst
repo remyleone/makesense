@@ -52,5 +52,5 @@ License <//choosealicense.com/licenses/apache-2.0/>`__.
 
 .. |Requirements Status| image:: //requires.io/github/sieben/makesense/requirements.png?branch=master
    :target: //requires.io/github/sieben/makesense/requirements/?branch=master
-.. |Build Status| image:: //secure.travis-ci.org/sieben/makesense.png
+.. |Build Status| image:: //secure.travis-ci.org/sieben/makesense.png?branch=master
    :target: //travis-ci.org/sieben/makesense
