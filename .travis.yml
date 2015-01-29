@@ -4,7 +4,7 @@ install:
     # Managing python dependencies through pip is the way to go. But it can be very long
     # to compile every time all the dependencies therefore to speedup unit testing we will
     # use binary packages
-  - "sudo apt-get -qq install python-matplotlib fabric python-pandas python-networkx python-numpy python-jinja2 python-scipy"
+  - "sudo apt-get -qq install ipython python-matplotlib fabric python-pandas python-networkx python-numpy python-jinja2 python-scipy"
     #- "pip install -r requirements.txt --use-mirrors"
 
   - "git clone --recursive git://github.com/contiki-os/contiki"
