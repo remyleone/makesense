@@ -21,7 +21,7 @@ install:
   - "sudo apt-get install tshark"
 
 script:
-  - pip -r requierements.txt
+  - pip install -r requierements.txt
   - "ipython nbconvert --to=python demo.ipynb"
   - python demo.py
 
