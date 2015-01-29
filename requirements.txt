@@ -6,3 +6,4 @@ networkx==1.9.1
 requests==2.4.3
 Jinja2==2.7.3
 numpy==1.9.1
+ipython==2.3.1
