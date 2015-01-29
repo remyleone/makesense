@@ -21,12 +21,8 @@ install:
   - "sudo apt-get install tshark"
 
 script:
-    - "fab new:dummy"
-    #- "fab make:dummy"
-    #- "fab launch:dummy; echo 'TODO: Fix up output Java simulation';"
-    #- "fab parse:dummy"
-    #- "fab analyze:dummy"
-    # - "fab plot:dummy"
+  - "ipython nbconvert --to=python demo.ipynb"
+  - python demo.py
 
 notifications:
   email: false
