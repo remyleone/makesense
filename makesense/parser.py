@@ -8,7 +8,6 @@ from csv import DictWriter
 from csv import DictReader
 from itertools import chain
 from os.path import join as pj
-from scipy import stats
 import numpy as np
 import operator
 import os
@@ -16,6 +15,8 @@ import re
 import subprocess
 import pandas as pd
 import logging
+
+import xml.etree.ElementTree as ET
 
 log = logging.getLogger("parsing")
 
@@ -36,6 +37,7 @@ fieldnames = ["time", "mote_id", "node", "strobes",
 
 message_t = namedtuple("Message", fieldnames)
 message_t.__new__.__defaults__ = tuple(len(fieldnames) * [None])
+
 
 def ipv6_to_host(s):
     return int(s.split(":")[-1:][0], 16)
@@ -79,7 +81,8 @@ def powertracker2csv(folder, shift=0):
             r"^(Sky|Wismote)_(?P<mote_id>\d+) INT (?P<int_time>\d+)",
             powertracker_logs, re.MULTILINE)
 
-        all_iterable = zip(monitored_iterable, on_iterable, tx_iterable, rx_iterable, int_iterable)
+        all_iterable = zip(
+            monitored_iterable, on_iterable, tx_iterable, rx_iterable, int_iterable)
 
         fields = ["mote_id", "monitored_time",
                   "tx_time", "rx_time", "on_time", "int_time"]
@@ -100,7 +103,8 @@ def powertracker2csv(folder, shift=0):
                     row.update((k, int(v))
                                for k, v in match.groupdict().items())
                 # Passing the result from us to s
-                row["monitored_time"] = float(row["monitored_time"]) / (10 ** 6)
+                row["monitored_time"] = float(
+                    row["monitored_time"]) / (10 ** 6)
                 row["tx_time"] = float(row["tx_time"]) / (10 ** 6)
                 row["rx_time"] = float(row["rx_time"]) / (10 ** 6)
                 row["on_time"] = float(row["on_time"]) / (10 ** 6)
@@ -170,7 +174,7 @@ def format_pcap_csv(folder):
     def f(x):
         if isinstance(x["ip_src"], str):
             try:
-                
+
                 return ipv6_to_host(x["ip_src"])
             except:
                 return x["ip_src"]
@@ -207,7 +211,6 @@ def format_pcap_csv(folder):
     df["forwarding"] = df.apply(f, axis=1)
 
     df.to_csv(pj(folder, "results", "pcap_relooked.csv"), index=False)
-
 
 
 def cast_message(d):
@@ -247,7 +250,8 @@ def _handle_dis_log(match, stats):
     stats[d["node"], "rpl_time"] += dis_packet
 
     return message_t(**d)
-_handle_dis_log.regexp = r" ".join([time_regexp, mote_id_regexp, "RPL: Sending a DIS"])
+_handle_dis_log.regexp = r" ".join(
+    [time_regexp, mote_id_regexp, "RPL: Sending a DIS"])
 
 
 def _handle_dao_log(match, stats):
@@ -261,7 +265,8 @@ def _handle_dao_log(match, stats):
     stats[d["node"], "rpl_count"] += 1
 
     return message_t(**d)
-_handle_dao_log.regexp = r" ".join([time_regexp, mote_id_regexp, "RPL: Sending DAO with prefix"])
+_handle_dao_log.regexp = r" ".join(
+    [time_regexp, mote_id_regexp, "RPL: Sending DAO with prefix"])
 
 
 def _handle_overhearing_log(match, stats):
@@ -271,7 +276,8 @@ def _handle_overhearing_log(match, stats):
     d["message_type"] = "overhearing"
     stats[d["mote_id"], "overhearing_count"] += 1
     return message_t(**d)
-_handle_overhearing_log.regexp = r" ".join([time_regexp, mote_id_regexp, "contikimac: data not for us"])
+_handle_overhearing_log.regexp = r" ".join(
+    [time_regexp, mote_id_regexp, "contikimac: data not for us"])
 
 
 def _handle_dio_log(match, stats):
@@ -285,7 +291,8 @@ def _handle_dio_log(match, stats):
     stats[d["node"], "rpl_time"] += dio_packet
 
     return message_t(**d)
-_handle_dio_log.regexp = r" ".join([time_regexp, mote_id_regexp, "(RPL: Sending a multicast-DIO|RPL: Sending unicast-DIO)"])
+_handle_dio_log.regexp = r" ".join(
+    [time_regexp, mote_id_regexp, "(RPL: Sending a multicast-DIO|RPL: Sending unicast-DIO)"])
 
 
 def _handle_forward_log(match, stats):
@@ -299,7 +306,8 @@ def _handle_forward_log(match, stats):
     stats[d["mote_id"], "forwarding_time"] += 8.0 * frame_size(10) / RATE
 
     return message_t(**d)
-_handle_forward_log.regexp = r" ".join([time_regexp, mote_id_regexp, "Forwarding packet to"])
+_handle_forward_log.regexp = r" ".join(
+    [time_regexp, mote_id_regexp, "Forwarding packet to"])
 
 
 def _handle_battery_recalibration_log(match, stats):
@@ -311,7 +319,8 @@ def _handle_battery_recalibration_log(match, stats):
 
     stats[d["node"], "battery_recalibration_count"] += 1
     return message_t(**d)
-_handle_battery_recalibration_log.regexp = r" ".join([time_regexp, mote_id_regexp, "Battery recalibration"])
+_handle_battery_recalibration_log.regexp = r" ".join(
+    [time_regexp, mote_id_regexp, "Battery recalibration"])
 
 
 def _handle_parent_log(match, stats):
@@ -326,7 +335,8 @@ def _handle_parent_log(match, stats):
     stats[d["node"], "parent_count"] += 1
 
     return message_t(**d)
-_handle_parent_log.regexp = r" ".join([time_regexp, mote_id_regexp, "Preferred Parent (?P<node>\d+)$"])
+_handle_parent_log.regexp = r" ".join(
+    [time_regexp, mote_id_regexp, "Preferred Parent (?P<node>\d+)$"])
 
 
 def _handle_mac_log(match, stats):
@@ -338,9 +348,11 @@ def _handle_mac_log(match, stats):
     d["strobes"] = int(d["strobes"])
     d["size"] = int(d["size"])
 
-    stats[d["mote_id"], "mac_time"] += (d["strobes"] + 1) * 8.0 * d["size"] / RATE
+    stats[
+        d["mote_id"], "mac_time"] += (d["strobes"] + 1) * 8.0 * d["size"] / RATE
     return message_t(**d)
-_handle_mac_log.regexp = r" ".join([time_regexp, mote_id_regexp, "contikimac: send \(strobes=(?P<strobes>\d+), len=(?P<size>\d+), ack, no collision\), done$"])
+_handle_mac_log.regexp = r" ".join(
+    [time_regexp, mote_id_regexp, "contikimac: send \(strobes=(?P<strobes>\d+), len=(?P<size>\d+), ack, no collision\), done$"])
 
 
 def _handle_udp_sending_log(match, stats):
@@ -353,7 +365,8 @@ def _handle_udp_sending_log(match, stats):
 
     stats[d["node"], "data_time"] += 8.0 * frame_size(d["size"]) / RATE
     return message_t(**d)
-_handle_udp_sending_log.regexp = r" ".join([time_regexp, mote_id_regexp, "DATA send to root \'(?P<message>(.)*)\'$"])
+_handle_udp_sending_log.regexp = r" ".join(
+    [time_regexp, mote_id_regexp, "DATA send to root \'(?P<message>(.)*)\'$"])
 
 
 def _handle_udp_reception_log(match, stats):
@@ -366,7 +379,8 @@ def _handle_udp_reception_log(match, stats):
 
     stats[d["node"], "data_time"] += 8.0 * frame_size(d["size"]) / RATE
     return message_t(**d)
-_handle_udp_reception_log.regexp = r" ".join([time_regexp, mote_id_regexp, "DATA recv \'(?P<message>(.)*)\' from (?P<node>\d+)$"])
+_handle_udp_reception_log.regexp = r" ".join(
+    [time_regexp, mote_id_regexp, "DATA recv \'(?P<message>(.)*)\' from (?P<node>\d+)$"])
 
 
 def _handle_neighbor_log(match, stats):
@@ -379,7 +393,9 @@ def _handle_neighbor_log(match, stats):
     stats[d["node"], "neighbor_count"] += 1
 
     return message_t(**d)
-_handle_neighbor_log.regexp = r" ".join([time_regexp, mote_id_regexp, "Neighbor (?P<node>\d+)$"])
+_handle_neighbor_log.regexp = r" ".join(
+    [time_regexp, mote_id_regexp, "Neighbor (?P<node>\d+)$"])
+
 
 def _handle_stats_log(match, stats):
     d = match.groupdict()
@@ -401,7 +417,7 @@ _handle_stats_log.regexp = r" ".join([
     "gled (?P<green_led>\d+)", "yled (?P<yellow_led>\d+)", "rled (?P<red_led>\d+)",
     "tx (?P<tx>\d+)", "listen (?P<rx>\d+)",
     "sensors (?P<sensors>\d+)", "serial (?P<serial>\d+)"
-    ])
+])
 
 _handlers = [
     _handle_battery_recalibration_log,
@@ -485,7 +501,9 @@ def message(folder):
     stats = defaultdict(float)
 
     sorted_messages = sorted(
-        chain(serial2message(folder, stats), powertracker2message(folder, stats)),
+        chain(serial2message(folder, stats),
+              # powertracker2message(folder, stats)
+              ),
         key=operator.attrgetter("time"))
 
     print_stats(stats)
@@ -500,6 +518,15 @@ def message(folder):
             writer.writerow(m._asdict())
     log.info("messages saved")
     return sorted_messages
+
+
+def csc_to_graph(name):
+    tree = ET(name)
+    mote_id = [int(t.text) for t in tree.findall(".//mote/interface_config/id")]
+    mote_type = [t.text for t in tree.findall(".//mote/motetype_identifier")]
+    x = [float(t.text) for t in tree.findall(".//mote/interface_config/x")]
+    y = [float(t.text) for t in tree.findall(".//mote/interface_config/y")]
+    z = [float(t.text) for t in tree.findall(".//mote/interface_config/z")]
 
 
 def bytes_to_times(n):
@@ -543,7 +570,7 @@ def message_2_csv(f):
                 match += 1
                 counter["count"].append(match)
                 model_receiver["time"].append(d["time"])
-                model_receiver["rx"].append(2* bytes_to_times(192))
+                model_receiver["rx"].append(2 * bytes_to_times(192))
                 model_receiver["tx"].append(ack_time)
 
                 model_sender["time"].append(d["time"])
@@ -553,10 +580,15 @@ def message_2_csv(f):
         for i in model_receiver["time"]:
             print(i)
 
+
 def parse_iotlab_energy(folder):
-    current_df = pd.read_csv(pj(folder, "current.csv"), header=None, names=['mote_id', 'time', 'current'])
-    voltage_df = pd.read_csv(pj(folder, "voltage.csv"), header=None, names=['mote_id', 'time', 'voltage'])
-    power_df = pd.read_csv(pj(folder, "power.csv"), header=None, names=['mote_id', 'time', 'power'])
-    temp_df = pd.merge(current_df, voltage_df, how="left", on=["mote_id", "time"])
+    current_df = pd.read_csv(
+        pj(folder, "current.csv"), header=None, names=['mote_id', 'time', 'current'])
+    voltage_df = pd.read_csv(
+        pj(folder, "voltage.csv"), header=None, names=['mote_id', 'time', 'voltage'])
+    power_df = pd.read_csv(
+        pj(folder, "power.csv"), header=None, names=['mote_id', 'time', 'power'])
+    temp_df = pd.merge(
+        current_df, voltage_df, how="left", on=["mote_id", "time"])
     res_df = pd.merge(temp_df, power_df, how="left", on=["mote_id", "time"])
     res_df.to_csv(pj(folder, "energy.csv"), index=False)
