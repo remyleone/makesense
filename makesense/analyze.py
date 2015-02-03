@@ -35,12 +35,14 @@ def depth(folder, root=1):
     rpl_graph = nx.DiGraph()
 
     message_df = pd.read_csv(pj(folder, "results", "messages.csv"))
-    parent_df = message_df[message_df.message_type == "parent"]
+    parent_df = message_df[message_df.message_type == "parent"][
+        ["time", "mote_id", "node"]]
 
     for index, row in parent_df.iterrows():
-        parent = row["node"]
-        node = row["mote_id"]
-        rpl_graph.add_edge(node, parent)
+        parent = int(row["node"])
+        node = int(row["mote_id"])
+        if parent and node:
+            rpl_graph.add_edge(node, parent)
 
     route_path = {n: nx.shortest_path(rpl_graph, n, root)
                        for n in rpl_graph.nodes()
