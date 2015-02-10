@@ -20,7 +20,7 @@ First we will create a simple C code that print a message through a loop.
 
 .. literalinclude:: example_firmware.c
    :language: c 
-   :emphasize-lines: 6,22
+   :emphasize-lines: 4,22
 
 .. code-block:: c
 
