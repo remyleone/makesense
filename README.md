@@ -1,6 +1,8 @@
 makesense (Managing Reproducible WSNs Experiments)
 ==================================================
 
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.15928.svg)](http://dx.doi.org/10.5281/zenodo.15928)
+
 makesense is a high-level framework for automating scientific
 experiments. Thanks for checking it out.
 
