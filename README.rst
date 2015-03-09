@@ -54,3 +54,5 @@ License <//choosealicense.com/licenses/apache-2.0/>`__.
    :target: //requires.io/github/sieben/makesense/requirements/?branch=master
 .. |Build Status| image:: //secure.travis-ci.org/sieben/makesense.png?branch=master
    :target: //travis-ci.org/sieben/makesense
+.. |DOI| image:: https://zenodo.org/badge/doi/10.5281/zenodo.15928.svg   
+   :target: http://dx.doi.org/10.5281/zenodo.15928
