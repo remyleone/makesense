@@ -1,8 +1,8 @@
-ipython==2.4.0
+ipython==3.0.0
 Jinja2==2.7.3
 Fabric==1.10.1
 networkx==1.9.1
-requests==2.5.1
+requests==2.5.3
 
 # Scientific libraries take a lot of time to build.
 #pandas==0.15.0
