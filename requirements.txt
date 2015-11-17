@@ -4,6 +4,7 @@ Fabric==1.10.2
 networkx==1.10
 requests==2.8.1
 pandas==0.17.1
+deap==1.0.1
 
 # Scientific libraries take a lot of time to build.
 #scipy==0.14
