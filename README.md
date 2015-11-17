@@ -45,7 +45,7 @@ Code status
 
 [![Requirements Status](https://requires.io/github/sieben/makesense/requirements.png?branch=master)](https://requires.io/github/sieben/makesense/requirements/?branch=master)
 
-[![Build Status](https://secure.travis-ci.org/sieben/makesense.png)](http://travis-ci.org/sieben/makesense)
+[![Build Status](https://api.travis-ci.org/sieben/makesense.png?branch=master)](http://travis-ci.org/sieben/makesense)
 
 Licence
 -------
