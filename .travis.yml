@@ -1,7 +1,10 @@
-language: python
+sudo: required
 
 install:
     docker pull sieben/makesense
+
+services:
+    - docker
 
 notifications:
   email: false
