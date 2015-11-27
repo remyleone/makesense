@@ -3,8 +3,11 @@ sudo: required
 install:
     docker pull sieben/makesense
 
+script:
+  - docker run sieben/makesense /bin/sh -c "pip install -r requirements.txt; ipython nbconvert --to=python demo.ipynb; python demo.py"
+
 services:
-    - docker
+  - docker
 
 notifications:
   email: false
