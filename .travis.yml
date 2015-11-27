@@ -1,33 +1,13 @@
-language: python
+sudo: required
 
 install:
-    # Managing python dependencies through pip is the way to go. But it can be very long
-    # to compile every time all the dependencies therefore to speedup unit testing we will
-    # use binary packages
-  - "sudo apt-get -qq install ipython python-matplotlib fabric python-pandas python-networkx python-numpy python-jinja2 python-scipy"
-    #- "pip install -r requirements.txt --use-mirrors"
-
-  - "git clone --recursive git://github.com/contiki-os/contiki"
-  - WGET="travis_retry wget --continue --tries=20 --waitretry=10 --retry-connrefused --no-dns-cache --timeout 300"
-  - sudo apt-get -qq update
-  - sudo apt-get -qq install lib32z1
-  - $WGET http://simonduq.github.io/resources/mspgcc-4.7.2-compiled.tar.bz2 &&
-    tar xjf mspgcc*.tar.bz2 -C /tmp/ &&
-    sudo cp -f -r /tmp/msp430/* /usr/local/ &&
-    rm -rf /tmp/msp430 mspgcc*.tar.bz2 &&
-    msp430-gcc --version
-
-    # Useful to analyze PCAP traces
-  - "sudo apt-get install tshark"
+    docker pull sieben/makesense
 
 script:
-  - pip install -r requirements.txt
-  - "ipython nbconvert --to=python demo.ipynb"
-  - python demo.py
+  - docker run sieben/makesense /bin/sh -c "pip install -r requirements.txt; ipython nbconvert --to=python demo.ipynb; python demo.py"
 
-# scipy and numpy takes too long to build
-virtualenv:
-  system_site_packages: true
+services:
+  - docker
 
 notifications:
   email: false
