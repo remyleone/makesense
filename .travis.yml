@@ -1,6 +1,6 @@
 language: python
 
-install:
+before_install:
     # Managing python dependencies through pip is the way to go. But it can be very long
     # to compile every time all the dependencies therefore to speedup unit testing we will
     # use binary packages
@@ -21,9 +21,10 @@ install:
   - "sudo apt-get install tshark"
 
 script:
-  - pip install -r requirements.txt
   - "ipython nbconvert --to=python demo.ipynb"
   - python demo.py
+
+cache: pip
 
 # scipy and numpy takes too long to build
 virtualenv:
