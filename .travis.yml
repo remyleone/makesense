@@ -1,15 +1,16 @@
+sudo: required
+dist: trusty
 language: python
 
 before_install:
     # Managing python dependencies through pip is the way to go. But it can be very long
     # to compile every time all the dependencies therefore to speedup unit testing we will
     # use binary packages
-  - "sudo apt-get -qq install ipython python-matplotlib fabric python-pandas python-networkx python-numpy python-jinja2 python-scipy"
-    #- "pip install -r requirements.txt --use-mirrors"
+  - sudo apt-get -qq update
+  - sudo apt-get -qq install python-matplotlib python-scipy python3-matplotlib python3-scipy
 
   - "git clone --recursive git://github.com/contiki-os/contiki"
   - WGET="travis_retry wget --continue --tries=20 --waitretry=10 --retry-connrefused --no-dns-cache --timeout 300"
-  - sudo apt-get -qq update
   - sudo apt-get -qq install lib32z1
   - $WGET http://simonduq.github.io/resources/mspgcc-4.7.2-compiled.tar.bz2 &&
     tar xjf mspgcc*.tar.bz2 -C /tmp/ &&
@@ -18,17 +19,15 @@ before_install:
     msp430-gcc --version
 
     # Useful to analyze PCAP traces
-  - "sudo apt-get install tshark"
+  - sudo apt-get -qq install tshark
 
 script:
   - "ipython nbconvert --to=python demo.ipynb"
   - python demo.py
+  - "ipython nbconvert --to=python cache.ipynb"
+  - python3 cache.py
 
 cache: pip
-
-# scipy and numpy takes too long to build
-virtualenv:
-  system_site_packages: true
 
 notifications:
   email: false
