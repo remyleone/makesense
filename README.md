@@ -16,8 +16,9 @@ Installation
 
 1. Download the repository. If you have git installed type the following
    command :
-       
-       git clone git@github.com:sieben/makesense.git
+  ```
+  git clone git@github.com:sieben/makesense.git
+  ```
 
 2. Download Contiki from the following address to the root of the
    previously downloaded repository:
@@ -27,8 +28,10 @@ Installation
    .travis.yml file as a way to help you.
 
 4. Install the python dependencies by using:
-    
-       pip install requierements.txt
+
+  ```  
+  pip install requierements.txt
+  ```
 
 Getting started
 ---------------
