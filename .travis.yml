@@ -4,6 +4,7 @@ before_install:
     # Managing python dependencies through pip is the way to go. But it can be very long
     # to compile every time all the dependencies therefore to speedup unit testing we will
     # use binary packages
+  - "sudo apt-get update"
   - "sudo apt-get -qq install ipython python-matplotlib fabric python-pandas python-networkx python-numpy python-jinja2 python-scipy"
     #- "pip install -r requirements.txt --use-mirrors"
 
