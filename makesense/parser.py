@@ -235,7 +235,7 @@ def frame_size(size):
     d = {'udp': 8, 'ipv6_hop': 8, '6lowpan': 6, '802.15.4': 23}
     if size > 50:
         log.warning('Fragmentation occurred I cannot compute reliably')
-    total = sum(d.values() + [size])
+    total = sum(list(d.values()) + [size])
     log.debug("frame_size Payload size: %d ; On wire size %d", size, total)
     return total
 
