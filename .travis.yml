@@ -22,7 +22,7 @@ before_install:
   - "sudo apt-get install tshark"
 
 script:
-  - "ipython nbconvert --to=python demo.ipynb"
+  - "jupyter nbconvert --to=python demo.ipynb"
   - python demo.py
 
 cache: pip
