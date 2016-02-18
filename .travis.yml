@@ -21,6 +21,9 @@ before_install:
     # Useful to analyze PCAP traces
   - "sudo apt-get install tshark"
 
+    # Install a ruby coap client
+  - "gem install coap"
+
 script:
   - "ipython nbconvert --to=python demo.ipynb"
   - python demo.py
