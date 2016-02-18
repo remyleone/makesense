@@ -175,7 +175,7 @@ def push_iotlab(name):
             f.write(json.dumps({"id": exp_id}))
 
     # get the content
-    print "Exp submited with id: %u" % exp_id
+    print("Exp submited with id: %u" % exp_id)
 
     run("experiment-cli wait -i %d" % exp_id)
 
