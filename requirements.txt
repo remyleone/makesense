@@ -1,4 +1,4 @@
-ipython[all]==4.0.1
+nbconvert==4.1.0
 Jinja2==2.8
 Fabric==1.10.2
 networkx==1.10
