@@ -1,7 +1,7 @@
-ipython[all]==4.0.1
+ipython[all]==4.1.1
 Jinja2==2.8
 Fabric==1.10.2
-networkx==1.10
+networkx==1.11
 requests==2.9.1
 pandas==0.17.1
 
