@@ -15,7 +15,7 @@ import iotlabcli
 from iotlabcli import experiment
 import requests
 from jinja2 import Environment, FileSystemLoader
-from fabric.api import env, task, lcd, local
+from fabric.api import env, task, lcd, local, parallel
 from fabric.api import get, hosts, put, roles, run
 import pandas as pd
 
@@ -37,8 +37,8 @@ env.use_ssh_config = True
 env.shell = "/bin/bash -c"
 env.roledefs.update({
     "web": ["perso", "galois"],
-    "cluster": ["enst", "nexium"],
-    "iotlab": ["rennes", "strasbourg", "euratech", "grenoble", "rocquencourt"]
+    "cluster": [],
+    "iotlab": ["rennes", "strasbourg", "grenoble", "rocquencourt"]
 })
 
 
@@ -411,9 +411,11 @@ def notebook(name):
 
 
 @task
+@parallel
 @roles("iotlab")
 def update_iotlab():
     run("cd iot-lab; git pull")
+    run("cd .oh-my-zsh; git pull")
     put("~/.iotlabrc", remote_path="~")
     put("~/.gitconfig", remote_path="~")
     put("~/.ssh/config", remote_path="~/.ssh/config")
