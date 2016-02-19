@@ -137,7 +137,7 @@ class Make(Step):
                 os.mkdir(PJ(self.result_folder, "logs"))
                 try:
                     os.symlink(self.result_folder, link_path)
-                except OSError, err:
+                except OSError as err:
                     if err.errno == errno.EEXIST:
                         os.unlink(link_path)
                         os.symlink(self.result_folder, link_path)
