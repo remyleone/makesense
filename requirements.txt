@@ -9,3 +9,6 @@ pandas==0.17.1
 #scipy==0.14
 #matplotlib==1.4.2
 #numpy==1.9.1
+
+# Adding iotlabcli
+-e git://github.com/iot-lab/cli-tools.git#egg=iotlabcli
