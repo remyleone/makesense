@@ -20,6 +20,8 @@
     <motetype>
       org.contikios.cooja.mspmote.WismoteMoteType
       <identifier>{{ mote_type.name }}</identifier>
+      <source EXPORT="discard">{{ mote_type.source }}</source>
+      <commands EXPORT="discard">{{ mote_type.commands }}</commands>
       <firmware EXPORT="copy">{{ mote_type.firmware }}</firmware>
       <moteinterface>org.contikios.cooja.interfaces.Position</moteinterface>
       <moteinterface>org.contikios.cooja.interfaces.RimeAddress</moteinterface>
@@ -135,5 +137,18 @@
     <height>319</height>
     <location_x>427</location_x>
     <location_y>385</location_y>
+  </plugin>
+  <plugin>
+    org.contikios.cooja.serialsocket.SerialSocketServer
+    <mote_arg>0</mote_arg>
+    <plugin_config>
+      <port>60001</port>
+      <bound>true</bound>
+    </plugin_config>
+    <width>362</width>
+    <z>0</z>
+    <height>116</height>
+    <location_x>457</location_x>
+    <location_y>415</location_y>
   </plugin>
 </simconf>

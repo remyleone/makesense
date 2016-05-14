@@ -18,4 +18,15 @@ cooja:
 cooja_iotlab:
 	make TARGET=cooja iotlab.csc
 
+PREFIX=fd00::1/64
+
+$(CONTIKI)/tools/tunslip6: $(CONTIKI)/tools/tunslip6.c
+	(cd $(CONTIKI)/tools && $(MAKE) tunslip6)
+
+connect-router: $(CONTIKI)/tools/tunslip6
+	sudo $(CONTIKI)/tools/tunslip6 $(PREFIX)
+
+connect-router-cooja:   $(CONTIKI)/tools/tunslip6
+	sudo $(CONTIKI)/tools/tunslip6 -a localhost -p 60001 $(PREFIX)
+
 # vi:filetype=make:ts=4:sw=4:et

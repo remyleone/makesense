@@ -1,13 +1,19 @@
 language: python
+sudo: required
+dist: trusty
+
+python:
+  - "3.4"
 
 before_install:
     # Managing python dependencies through pip is the way to go. But it can be very long
     # to compile every time all the dependencies therefore to speedup unit testing we will
     # use binary packages
   - "sudo apt-get update"
-  - "sudo apt-get -qq install ipython python-matplotlib fabric python-pandas python-networkx python-numpy python-jinja2 python-scipy"
+  - "sudo apt-get -qq install ipython ipython3 python3-matplotlib python-matplotlib python3-pandas python-pandas python-networkx python3-numpy python-numpy python-jinja2 python-scipy python3-scipy tshark"
     #- "pip install -r requirements.txt --use-mirrors"
 
+    # While https://github.com/contiki-os/contiki/pull/1557 is not merged, we use our own Contiki repository
   - "git clone --recursive git://github.com/contiki-os/contiki"
   - WGET="travis_retry wget --continue --tries=20 --waitretry=10 --retry-connrefused --no-dns-cache --timeout 300"
   - sudo apt-get -qq update
@@ -18,15 +24,18 @@ before_install:
     rm -rf /tmp/msp430 mspgcc*.tar.bz2 &&
     msp430-gcc --version
 
-    # Useful to analyze PCAP traces
-  - "sudo apt-get install tshark"
-
     # Install a ruby coap client
   - "gem install coap"
+
+    # Contiki seems to work only with oracle jdk1.7
+  - jdk_switcher use oraclejdk7
 
 script:
   - "ipython nbconvert --to=python demo.ipynb"
   - python demo.py
+  - fab new:test
+  - fab make:test
+  - fab launch_cooja:test
 
 cache: pip
 

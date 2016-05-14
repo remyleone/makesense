@@ -1,9 +1,10 @@
 ipython[all]==4.1.1
 Jinja2==2.8
-Fabric==1.10.2
+Fabric3==1.10.2.post3
 networkx==1.11
 requests==2.9.1
 pandas==0.17.1
+pycrypto==2.6.1
 
 # Scientific libraries take a lot of time to build.
 #scipy==0.14

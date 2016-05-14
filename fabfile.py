@@ -48,10 +48,19 @@ EXPERIMENT_FOLDER = pj(ROOT_DIR, "experiments")
 TEMPLATE_FOLDER = pj(ROOT_DIR, "templates")
 TEMPLATE_ENV = Environment(loader=FileSystemLoader(TEMPLATE_FOLDER))
 COOJA_DIR = pj(CONTIKI_FOLDER, "tools", "cooja")
+TUNSLIP6 = pj(CONTIKI_FOLDER, "tools", "tunslip6")
 
+settings = {
+        "ROOT_DIR": ROOT_DIR,
+        "CONTIKI_FOLDER": CONTIKI_FOLDER,
+        "EXPERIMENT_FOLDER": EXPERIMENT_FOLDER,
+        "TEMPLATE_FOLDER": TEMPLATE_FOLDER,
+        "COOJA_DIR": COOJA_DIR,
+        "TUNSLIP6": TUNSLIP6
+}
 
 @task
-def new(name):
+def new(name, notebook_template="Default Jupyter notebook.ipynb"):
     """
     Default experiment is a client and a server sending messages to each others.
     The default platform is wismote
@@ -60,48 +69,16 @@ def new(name):
     if not os.path.exists(path):
         os.makedirs(path)
 
-    client_template = TEMPLATE_ENV.get_template("dummy_client.c")
-    with open(pj(path, "dummy-client.c"), "w") as f:
-        f.write(client_template.render())
+    # Copy of the settings file
+    with open(pj(path, "settings.json"), "w") as f:
+        f.write(json.dumps(settings,
+                sort_keys=True,
+                indent=4,
+                separators=(',', ': ')))
 
-    server_template = TEMPLATE_ENV.get_template("dummy_server.c")
-    with open(pj(path, "dummy-server.c"), "w") as f:
-        f.write(server_template.render())
-
-    makefile_template = TEMPLATE_ENV.get_template("dummy_makefile")
-    with open(pj(path, "Makefile"), "w") as f:
-        f.write(makefile_template.render(contiki=CONTIKI_FOLDER,
-                                         target="wismote"))
-
-    main_csc_template = TEMPLATE_ENV.get_template("dummy_main.csc")
-    script_template = TEMPLATE_ENV.get_template("dummy_script.js")
-    script = script_template.render(
-        timeout=100000,
-        powertracker_frequency=10000,
-    )
-    with open(pj(path, "main.csc"), "w") as f:
-        f.write(main_csc_template.render(
-            title="Dummy Simulation",
-            random_seed=12345,
-            transmitting_range=42,
-            interference_range=42,
-            success_ratio_tx=1.0,
-            success_ratio_rx=1.0,
-            mote_types=[
-                {"name": "server", "description": "server",
-                    "firmware": "dummy-server.wismote"},
-                {"name": "client", "description": "client",
-                    "firmware": "dummy-client.wismote"}
-            ],
-            motes=[
-                {"mote_id": 1, "x": 0, "y": 0, "z": 0, "mote_type": "server"},
-                {"mote_id": 2, "x": 1, "y": 1, "z": 0, "mote_type": "client"},
-            ],
-            script=script))
-
-    print(
-        "Think to rename otherwise if you do fab new:%s again dummy files will be overwritten" % name)
-
+    notebook_template = TEMPLATE_ENV.get_template(notebook_template)
+    with open(pj(path, "%s.ipynb" % name), "w") as f:
+        f.write(notebook_template.render())
 
 @task
 def new_iotlab(name):
@@ -132,18 +109,6 @@ def new_iotlab(name):
     config_template = TEMPLATE_ENV.get_template("dummy_iotlab.json")
     with open(pj(path, "iotlab.json"), "w") as f:
         f.write(config_template.render())
-
-
-@task
-def compile_nodes(name, target="wismote"):
-    """
-    Fabric command to compile nodes
-    """
-    path = pj(EXPERIMENT_FOLDER, name)
-    with lcd(path):
-        local("make TARGET=%s" % target)
-        local("make ihex")
-
 
 @task
 @hosts("grenoble")
@@ -309,16 +274,6 @@ def clean_nodes(name):
     with lcd(path):
         local("make clean")
 
-
-@task
-def make(name):
-    """
-    Fabric command to make all the folder structures and compile nodes
-    """
-    compile_nodes(name)
-    compile_cooja()
-
-
 @task
 def launch(name):
     """
@@ -327,7 +282,6 @@ def launch(name):
     path = pj(EXPERIMENT_FOLDER, name)
     with lcd(path):
         local("make run")
-
 
 @task
 def clean_results(name):
@@ -376,14 +330,6 @@ def pull(name):
     path = pj(EXPERIMENT_FOLDER, name)
     get(name, local_path=path)
 
-
-@task
-@hosts("galois")
-def pull_results(name):
-    path = pj(EXPERIMENT_FOLDER, name)
-    get(pj(name, "results"), local_path=path)
-
-
 @task
 def plot(name):
     path = pj(EXPERIMENT_FOLDER, name)
@@ -398,17 +344,6 @@ def plot(name):
     pt.strobes_depth(path)
     pt.energy(path)
     pt.energy_depth(path)
-
-
-@task
-def notebook(name):
-    notebook_template = TEMPLATE_ENV.get_template("dummy.ipynb")
-    path = pj(EXPERIMENT_FOLDER, name)
-    with open(pj(path, "%s.ipynb" % name), "w") as f:
-        f.write(notebook_template.render())
-    print("Run with fab web:%(name)s (ipython notebook %(path)s/%(name)s.ipynb)" %
-          {"path": path, "name": name})
-
 
 @task
 @parallel
@@ -436,90 +371,43 @@ def web(name):
     Fabric command to launch a web server with ipython
     """
     path = pj(EXPERIMENT_FOLDER, name)
-    local("ipython notebook %(path)s/%(name)s.ipynb" %
+    local("jupyter-notebook %(path)s/%(name)s.ipynb" %
           {"path": path, "name": name})
 
-import io, os, sys, types
 import nbformat
-from IPython.core.interactiveshell import InteractiveShell
+from nbconvert import PythonExporter
 
-def find_notebook(fullname, path=None):
-    """find a notebook, given its fully qualified name and an optional path
+def update_script(name):
+    python_exporter = PythonExporter()
+    with open("experiments/{name}/{name}.ipynb".format(name=name)) as f:
+        notebook = nbformat.reads(f.read(), 4)
+        test = python_exporter.from_notebook_node(notebook)
+        path = "experiments/{name}/{name}.py".format(name=name)
+        with open(path, "w") as f_out:
+            f_out.write(test[0])
+        return path
 
-    This turns "foo.bar" into "foo/bar.ipynb"
-    and tries turning "Foo_Bar" into "Foo Bar" if Foo_Bar
-    does not exist.
+@task
+def make(name):
     """
-    name = fullname.rsplit('.', 1)[-1]
-    if not path:
-        path = ['']
-    for d in path:
-        nb_path = os.path.join(d, name + ".ipynb")
-        if os.path.isfile(nb_path):
-            return nb_path
-        # let import Notebook_Name find "Notebook Name.ipynb"
-        nb_path = nb_path.replace("_", " ")
-        if os.path.isfile(nb_path):
-            return nb_path
+    Fabric command to make all the folder structures and compile nodes
+    """
+    # In python 3.5
+    #import importlib.util
+    #spec = importlib.util.spec_from_file_location("module.name", "/path/to/file.py")
+    #foo = importlib.util.module_from_spec(spec)
+    #spec.loader.exec_module(foo)
+    #foo.MyClass()
 
-class NotebookLoader(object):
-    """Module Loader for IPython Notebooks"""
-    def __init__(self, path=None):
-        self.shell = InteractiveShell.instance()
-        self.path = path
+    path = update_script(name)
+    from importlib.machinery import SourceFileLoader
+    SourceFileLoader(name, path).load_module().make()
 
-    def load_module(self, fullname):
-        """import a notebook as a module"""
-        path = find_notebook(fullname, self.path)
-
-        print ("importing IPython notebook from %s" % path)
-
-        # load the notebook object
-        with open(path, 'r', encoding='utf-8') as f:
-            nb = nbformat.read(f, 3)
-
-
-        # create the module and add it to sys.modules
-        # if name in sys.modules:
-        #    return sys.modules[name]
-        mod = types.ModuleType(fullname)
-        mod.__file__ = path
-        mod.__loader__ = self
-        sys.modules[fullname] = mod
-
-        # extra work to ensure that magics that would affect the user_ns
-        # actually affect the notebook module's ns
-        save_user_ns = self.shell.user_ns
-        self.shell.user_ns = mod.__dict__
-
-        try:
-          for cell in nb.worksheets[0].cells:
-            if cell.cell_type == 'code' and cell.language == 'python':
-                # transform the input to executable Python
-                code = self.shell.input_transformer_manager.transform_cell(cell.input)
-                # run the code in themodule
-                exec(code, mod.__dict__)
-        finally:
-            self.shell.user_ns = save_user_ns
-        return mod
-
-class NotebookFinder(object):
-    """Module finder that locates IPython Notebooks"""
-    def __init__(self):
-        self.loaders = {}
-
-    def find_module(self, fullname, path=None):
-        nb_path = find_notebook(fullname, path)
-        if not nb_path:
-            return
-
-        key = path
-        if path:
-            # lists aren't hashable
-            key = os.path.sep.join(path)
-
-        if key not in self.loaders:
-            self.loaders[key] = NotebookLoader(path)
-        return self.loaders[key]
-
-sys.meta_path.append(NotebookFinder())
+@task
+def launch_cooja(name):
+    """
+    Fabric command to launch an experiment
+    """
+    path = update_script(name)
+    from importlib.machinery import SourceFileLoader
+    SourceFileLoader(name, path).load_module().launch_cooja()
