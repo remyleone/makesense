@@ -117,8 +117,8 @@ def pcap2csv(folder):
     """
     Execute a simple filter on PCAP and count
     """
-    print("start pcap2csv")
-    with open(pj(folder, "results", "pcap.csv"), "w") as output_file:
+    log.debug("start pcap2csv")
+    with open(pj(folder, "results", "pcap.csv"), "wb") as output_file:
         command = ["tshark",
                    "-T", "fields",
                    "-E", "header=y",
@@ -133,7 +133,7 @@ def pcap2csv(folder):
                    "-e", "icmpv6.code",
                    "-e", "data.data",
                    "-r", pj(folder, "output.pcap")]
-        print(str(command))
+        log.debug(str(command))
         process = subprocess.Popen(command, stdout=subprocess.PIPE)
         stdout, stderr = process.communicate()
         output_file.write(stdout)
