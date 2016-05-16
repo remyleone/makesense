@@ -66,19 +66,19 @@ def powertracker2csv(folder, shift=0):
         powertracker_logs = powertracker_file.read()
 
         monitored_iterable = re.finditer(
-            r"^(Sky|Wismote)_(?P<mote_id>\d+) MONITORED (?P<monitored_time>\d+)",
+            r"^(Sky|Wismote|Z1)_(?P<mote_id>\d+) MONITORED (?P<monitored_time>\d+)",
             powertracker_logs, re.MULTILINE)
         on_iterable = re.finditer(
-            r"^(Sky|Wismote)_(?P<mote_id>\d+) ON (?P<on_time>\d+)",
+            r"^(Sky|Wismote|Z1)_(?P<mote_id>\d+) ON (?P<on_time>\d+)",
             powertracker_logs, re.MULTILINE)
         tx_iterable = re.finditer(
-            r"^(Sky|Wismote)_(?P<mote_id>\d+) TX (?P<tx_time>\d+)",
+            r"^(Sky|Wismote|Z1)_(?P<mote_id>\d+) TX (?P<tx_time>\d+)",
             powertracker_logs, re.MULTILINE)
         rx_iterable = re.finditer(
-            r"^(Sky|Wismote)_(?P<mote_id>\d+) RX (?P<rx_time>\d+)",
+            r"^(Sky|Wismote|Z1)_(?P<mote_id>\d+) RX (?P<rx_time>\d+)",
             powertracker_logs, re.MULTILINE)
         int_iterable = re.finditer(
-            r"^(Sky|Wismote)_(?P<mote_id>\d+) INT (?P<int_time>\d+)",
+            r"^(Sky|Wismote|Z1)_(?P<mote_id>\d+) INT (?P<int_time>\d+)",
             powertracker_logs, re.MULTILINE)
 
         all_iterable = zip(
@@ -117,8 +117,8 @@ def pcap2csv(folder):
     """
     Execute a simple filter on PCAP and count
     """
-    print("start pcap2csv")
-    with open(pj(folder, "results", "pcap.csv"), "w") as output_file:
+    log.debug("start pcap2csv")
+    with open(pj(folder, "results", "pcap.csv"), "wb") as output_file:
         command = ["tshark",
                    "-T", "fields",
                    "-E", "header=y",
@@ -133,7 +133,7 @@ def pcap2csv(folder):
                    "-e", "icmpv6.code",
                    "-e", "data.data",
                    "-r", pj(folder, "output.pcap")]
-        print(str(command))
+        log.debug(str(command))
         process = subprocess.Popen(command, stdout=subprocess.PIPE)
         stdout, stderr = process.communicate()
         output_file.write(stdout)
