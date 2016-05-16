@@ -66,19 +66,19 @@ def powertracker2csv(folder, shift=0):
         powertracker_logs = powertracker_file.read()
 
         monitored_iterable = re.finditer(
-            r"^(Sky|Wismote)_(?P<mote_id>\d+) MONITORED (?P<monitored_time>\d+)",
+            r"^(Sky|Wismote|Z1)_(?P<mote_id>\d+) MONITORED (?P<monitored_time>\d+)",
             powertracker_logs, re.MULTILINE)
         on_iterable = re.finditer(
-            r"^(Sky|Wismote)_(?P<mote_id>\d+) ON (?P<on_time>\d+)",
+            r"^(Sky|Wismote|Z1)_(?P<mote_id>\d+) ON (?P<on_time>\d+)",
             powertracker_logs, re.MULTILINE)
         tx_iterable = re.finditer(
-            r"^(Sky|Wismote)_(?P<mote_id>\d+) TX (?P<tx_time>\d+)",
+            r"^(Sky|Wismote|Z1)_(?P<mote_id>\d+) TX (?P<tx_time>\d+)",
             powertracker_logs, re.MULTILINE)
         rx_iterable = re.finditer(
-            r"^(Sky|Wismote)_(?P<mote_id>\d+) RX (?P<rx_time>\d+)",
+            r"^(Sky|Wismote|Z1)_(?P<mote_id>\d+) RX (?P<rx_time>\d+)",
             powertracker_logs, re.MULTILINE)
         int_iterable = re.finditer(
-            r"^(Sky|Wismote)_(?P<mote_id>\d+) INT (?P<int_time>\d+)",
+            r"^(Sky|Wismote|Z1)_(?P<mote_id>\d+) INT (?P<int_time>\d+)",
             powertracker_logs, re.MULTILINE)
 
         all_iterable = zip(
