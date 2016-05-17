@@ -36,6 +36,8 @@ script:
   - fab new:test
   - fab make:test
   - fab launch_cooja:test
+  - jupyter-nbconvert --to=python "experiments/contikimac_strobbing/ContikiMAC strobbing.ipynb"
+  - python "experiments/contikimac_strobbing/ContikiMAC strobbing.py"
 
 cache: pip
 
