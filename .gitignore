@@ -48,6 +48,5 @@ nosetests.xml
 *.sublime-workspace
 *.sublime-project
 
-experiments
 contiki
 .ipynb_checkpoints
