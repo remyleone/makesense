@@ -1,0 +1,8 @@
+[16:09:10 - main] [Cooja.java:1314] [INFO] - > Starting Cooja
+[16:09:10 - main] [Cooja.java:2855] [INFO] - External tools default settings: /external_tools_linux_64.config
+[16:09:10 - main] [Cooja.java:2885] [INFO] - External tools user settings: /home/sieben/.cooja.user.properties
+[16:09:11 - main] [Cooja.java:4259] [WARN] - Replaced [APPS_DIR]/radiologger-headless with /home/sieben/Dropbox/workspace/contiki/tools/cooja/apps/radiologger-headless (default: /home/sieben/workspace/contiki/tools/cooja/apps), but could not find it. This does not have to be an error, as the file might be created later.
+[16:09:11 - main] [Cooja.java:3623] [WARN] - Loaded simulation may depend on not found  extension: '/home/sieben/Dropbox/workspace/contiki/tools/cooja/apps/radiologger-headless'
+[16:09:11 - main] [Cooja.java:4259] [WARN] - Replaced [APPS_DIR]/serial2pty with /home/sieben/Dropbox/workspace/contiki/tools/cooja/apps/serial2pty (default: /home/sieben/workspace/contiki/tools/cooja/apps), but could not find it. This does not have to be an error, as the file might be created later.
+[16:09:11 - main] [Cooja.java:3623] [WARN] - Loaded simulation may depend on not found  extension: '/home/sieben/Dropbox/workspace/contiki/tools/cooja/apps/serial2pty'
+[16:09:11 - main] [Simulation.java:421] [INFO] - Simulation random seed: 123456
