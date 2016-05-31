@@ -1,0 +1,12 @@
+SRC=$(wildcard [!symbols]*.c)
+PROGS = $(patsubst %.c,%,$(SRC))
+all: $(PROGS)
+	for code in SRC; \
+		do \
+		echo $$code;\
+		done
+
+CONTIKI={{ contiki }}
+TARGET={{ target }}
+
+include $(CONTIKI)/Makefile.include
