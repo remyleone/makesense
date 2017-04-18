@@ -7,7 +7,6 @@ pandas==0.18.1
 pycrypto==2.6.1
 
 # Scientific libraries take a lot of time to build.
-#scipy==0.14
 #matplotlib==1.4.2
 #numpy==1.9.1
 
